@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.venv/
+.venv-*/
+
+# Local tooling and downloads
+work/
+downloads/
+
+# Model weights are downloaded separately
+models/
+
+# Cloned/generated third-party code
+CosyVoice/
+third_party/
+
+# User audio and generated outputs
+app/data/
+tests/assets/style_refs/
+tests/outputs/
+
+# Local proposal document, not part of the source repo
+机器人TTS语音语调可控化实现方案.docx
+
+# Runtime logs
+server*.log
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
