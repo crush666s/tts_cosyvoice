@@ -18,6 +18,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -501,13 +505,24 @@ audio {
 @media (max-width: 640px) {
   .topbar {
     padding: 14px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
 
   .layout {
     padding: 16px;
   }
 
+  .brand {
+    align-items: flex-start;
+  }
+
   .brand h1 {
     font-size: 16px;
+  }
+
+  .status-pill {
+    white-space: normal;
   }
 }
