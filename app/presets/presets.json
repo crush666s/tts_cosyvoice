@@ -1,0 +1,18 @@
+[
+  {
+    "id": "child_peppa",
+    "label": "儿童音色",
+    "description": "卡通童声，语调上扬活泼",
+    "file": "child_peppa.wav",
+    "duration_s": 6.0,
+    "reference_text": "希望你以后能够做的比我还好呦。"
+  },
+  {
+    "id": "child_girl",
+    "label": "小女孩音色",
+    "description": "清亮童声，语气轻快",
+    "file": "child_girl.wav",
+    "duration_s": 6.0,
+    "reference_text": "希望你以后能够做的比我还好呦。"
+  }
+]

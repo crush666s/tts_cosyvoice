@@ -33,3 +33,6 @@ server*.log
 # OS files
 .DS_Store
 Thumbs.db
+
+# WeChat DevTools local private settings
+miniprogram/project.private.config.json

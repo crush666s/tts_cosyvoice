@@ -1,0 +1,41 @@
+{
+  "description": "CosyVoice 语音风格工作台 - 微信小程序端",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "projectname": "tts-cosyvoice-miniprogram",
+  "appid": "wx2027fe0411675b10",
+  "compileType": "miniprogram",
+  "libVersion": "3.17.4",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": true,
+    "coverView": true,
+    "ignoreUploadUnusedFiles": true,
+    "compileWorklet": false,
+    "uglifyFileName": false,
+    "uploadWithSourceMap": true,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "minifyWXML": true,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": false,
+    "condition": false,
+    "swc": false,
+    "disableSWC": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "condition": {},
+  "simulatorPluginLibVersion": {},
+  "editorSetting": {}
+}

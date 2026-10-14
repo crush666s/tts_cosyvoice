@@ -1,0 +1,186 @@
+<view class="page">
+  <view class="topbar">
+    <view class="brand">
+      <view class="brand-mark">声</view>
+      <view class="brand-text">
+        <view class="brand-title">CosyVoice 语音风格工作台</view>
+        <view class="brand-sub">参考音色 · 输出内容 · 生成语音</view>
+      </view>
+    </view>
+    <view class="pill {{modelReady ? 'ready' : ''}}">{{statusText}}</view>
+  </view>
+
+  <view class="card" wx:if="{{step === 1}}">
+    <view class="card-head">
+      <view class="step">1</view>
+      <view class="card-head-text">
+        <view class="card-title">选择参考音色以及语音语调</view>
+        <view class="card-sub">录一段自己的声音，或者直接用内置示例音色</view>
+      </view>
+    </view>
+
+    <view class="tabs">
+      <view class="tab {{source === 'record' ? 'active' : ''}}" data-source="record" bindtap="onSwitchSource">自己录音</view>
+      <view class="tab {{source === 'preset' ? 'active' : ''}}" data-source="preset" bindtap="onSwitchSource">示例音色</view>
+    </view>
+
+    <view wx:if="{{source === 'record'}}" class="pane">
+      <view class="mic-wrap">
+        <view class="mic-btn {{recording ? 'recording' : ''}}" bindtap="onToggleRecord">
+          <view class="mic-dot"></view>
+        </view>
+        <view class="mic-timer">{{recSecondsText}}</view>
+      </view>
+      <view class="hint">{{recHint}}</view>
+      <view class="field">
+        <view class="field-label">录音里念的文字（必须和录音内容一致）</view>
+        <textarea
+          class="script-input"
+          value="{{recordScript}}"
+          placeholder="请填写录音中实际朗读的内容"
+          maxlength="120"
+          auto-height
+          bindinput="onRecordScriptInput"
+        />
+      </view>
+      <button class="btn ghost" disabled="{{!recordedPath}}" bindtap="onPlayRecording">试听这段录音</button>
+      <button class="btn" disabled="{{!recordedPath}}" bindtap="onUseRecording">把这段录音设为参考音频</button>
+    </view>
+
+    <view wx:else class="pane">
+      <view
+        wx:for="{{presets}}"
+        wx:key="id"
+        class="preset {{selectedPresetId === item.id ? 'active' : ''}}"
+      >
+        <view class="preset-main">
+          <view class="preset-label">{{item.label}}</view>
+          <view class="preset-desc">{{item.description}} · {{item.duration_s}} 秒</view>
+        </view>
+        <view class="preset-actions">
+          <view class="icon-btn" data-id="{{item.id}}" catchtap="onPreviewPreset">{{previewingPresetId === item.id ? '停止' : '试听'}}</view>
+          <view class="select-btn" data-id="{{item.id}}" catchtap="onSelectPreset">{{selectedPresetId === item.id ? '已选择' : '选择'}}</view>
+        </view>
+      </view>
+      <view wx:if="{{!presets.length}}" class="hint">示例音色加载中…</view>
+    </view>
+
+    <view wx:if="{{referenceNotice}}" class="note {{referenceNoticeType}}">{{referenceNotice}}</view>
+  </view>
+
+  <view class="card" wx:if="{{step === 2}}">
+    <view class="card-head">
+      <view class="step">2</view>
+      <view class="card-head-text">
+        <view class="card-title">选择输出语段</view>
+        <view class="card-sub">从常用语段中选一句，或者自己输入</view>
+      </view>
+    </view>
+
+    <view class="tabs">
+      <view class="tab {{phraseMode === 'preset' ? 'active' : ''}}" data-mode="preset" bindtap="onPhraseMode">预置语段</view>
+      <view class="tab {{phraseMode === 'custom' ? 'active' : ''}}" data-mode="custom" bindtap="onPhraseMode">自定义文字</view>
+    </view>
+
+    <block wx:if="{{phraseMode === 'preset'}}">
+      <input
+        class="search"
+        type="text"
+        value="{{phraseQuery}}"
+        placeholder="搜索语段，例如：报警、确认、温度"
+        bindinput="onSearchInput"
+      />
+      <scroll-view class="phrase-scroll" scroll-y>
+        <view wx:for="{{visibleGroups}}" wx:key="name" class="group">
+          <view class="group-name">{{item.name}}</view>
+          <view
+            wx:for="{{item.items}}"
+            wx:for-item="phrase"
+            wx:key="id"
+            class="phrase {{selectedPhraseId === phrase.id ? 'active' : ''}}"
+            data-id="{{phrase.id}}"
+            data-text="{{phrase.text}}"
+            bindtap="onSelectPhrase"
+          >{{phrase.text}}</view>
+        </view>
+        <view wx:if="{{!visibleGroups.length}}" class="hint">没有匹配的语段</view>
+      </scroll-view>
+    </block>
+
+    <view wx:else class="pane">
+      <textarea
+        class="script-input"
+        value="{{customText}}"
+        placeholder="输入要合成的文字，例如：设备已准备就绪，可以开始检测。"
+        maxlength="200"
+        auto-height
+        bindinput="onCustomTextInput"
+      />
+      <view class="hint">建议 30 字以内，太长会明显变慢</view>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{step === 3}}">
+    <view class="card-head">
+      <view class="step">3</view>
+      <view class="card-head-text">
+        <view class="card-title">生成语音</view>
+        <view class="card-sub">决定语气来源，然后合成并试听</view>
+      </view>
+    </view>
+
+    <view class="modes">
+      <view
+        wx:for="{{modes}}"
+        wx:key="id"
+        class="mode {{mode === item.id ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onModeChange"
+      >{{item.label}}</view>
+    </view>
+
+    <view wx:if="{{mode === 'style'}}" class="field">
+      <view class="field-label">语音导演风格</view>
+      <picker mode="selector" range="{{styleLabels}}" value="{{styleIndex}}" bindchange="onStyleChange">
+        <view class="picker">{{styleLabels[styleIndex] || '加载中…'}}</view>
+      </picker>
+    </view>
+
+    <view wx:if="{{mode === 'reference'}}" class="note warn">模仿参考语调会严格跟随参考音频的韵律，需要参考语音不少于 5 秒。</view>
+
+    <view class="summary">
+      <view class="summary-line"><text class="summary-key">参考音色</text><text class="summary-val">{{referenceLabel}}</text></view>
+      <view class="summary-line"><text class="summary-key">输出内容</text><text class="summary-val">{{phraseMode === 'custom' ? (customText || '未填写') : (selectedPhraseText || '未选择')}}</text></view>
+    </view>
+
+    <button class="btn" disabled="{{!canGenerate}}" bindtap="onGenerate">{{generating ? generatingText : '生成语音'}}</button>
+
+    <view wx:if="{{errorText}}" class="note error">{{errorText}}</view>
+
+    <view wx:if="{{resultUrl}}" class="result">
+      <view class="result-head">生成结果</view>
+      <view class="result-meta">
+        <text>时长 {{result.duration_s}} 秒</text>
+        <text>耗时 {{result.gen_s}} 秒</text>
+        <text>RTF {{result.rtf}}</text>
+      </view>
+      <button class="btn" bindtap="onPlayResult">{{playingResult ? '停止播放' : '播放生成的语音'}}</button>
+      <button class="btn ghost" bindtap="onCopyLink">复制音频直链</button>
+    </view>
+  </view>
+
+  <view class="tabbar">
+    <view class="tabbar-item {{step === 1 ? 'active' : ''}}" data-step="1" bindtap="onStepChange">
+      <view class="tabbar-idx">1</view>
+      <view class="tabbar-text">参考音色</view>
+    </view>
+    <view class="tabbar-item {{step === 2 ? 'active' : ''}}" data-step="2" bindtap="onStepChange">
+      <view class="tabbar-idx">2</view>
+      <view class="tabbar-text">输出内容</view>
+    </view>
+    <view class="tabbar-item {{step === 3 ? 'active' : ''}}" data-step="3" bindtap="onStepChange">
+      <view class="tabbar-idx">3</view>
+      <view class="tabbar-text">生成语音</view>
+    </view>
+  </view>
+</view>

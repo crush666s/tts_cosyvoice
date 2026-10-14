@@ -1,0 +1,19 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#0f766e",
+    "navigationBarTitleText": "CosyVoice 语音风格工作台",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f4f6f8",
+    "backgroundTextStyle": "light"
+  },
+  "permission": {
+    "scope.record": {
+      "desc": "用于录制参考语音，作为生成音色的参考"
+    }
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
